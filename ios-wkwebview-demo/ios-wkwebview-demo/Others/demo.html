@@ -1,16 +1,31 @@
 <html>
     <script>
-        function onButtonClick() {
-            showAlert();
-        }
         function showAlert() {
             alert('Message written in demo.html');
+        }
+        function openTab() {
+            window.open('https://www.google.co.jp');
+        }
+        function openWindow() {
+            window.open('https://www.yahoo.co.jp', '_blank', 'width=400px,height=400px');
         }
     </script>
     <body>
         <input type="button"
         style="width: 100%; font-size: 30px; position: absolute; left: 0px; top: 20px"
-        value="tap here"
+        value="show alert"
         onclick="showAlert();"/>
+    </body>
+    <body>
+        <input type="button"
+        style="width: 100%; font-size: 30px; position: absolute; left: 0px; top: 120px"
+        value="new tab"
+        onclick="openTab();"/>
+    </body>
+    <body>
+        <input type="button"
+        style="width: 100%; font-size: 30px; position: absolute; left: 0px; top: 220px"
+        value="new window"
+        onclick="openWindow();"/>
     </body>
 </html>

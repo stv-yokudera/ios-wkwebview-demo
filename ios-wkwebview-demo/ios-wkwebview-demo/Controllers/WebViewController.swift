@@ -21,6 +21,9 @@ final class WebViewController: UIViewController {
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.uiDelegate = self
         webView.navigationDelegate = self
+
+        // スワイプで戻るまたは進むを許可
+        webView.allowsBackForwardNavigationGestures = true
         view = webView
     }
 
@@ -68,13 +71,16 @@ final class WebViewController: UIViewController {
 
 extension WebViewController: WKUIDelegate {
 
-    /// 新しいウィンドウ、フレームを指定してコンテンツを開く時、新しいWKWebViewを生成して返却する
+    /// 新しいウィンドウ、フレームを指定してコンテンツを開く時
     func webView(_ webView: WKWebView,
                  createWebViewWith configuration: WKWebViewConfiguration,
                  for navigationAction: WKNavigationAction,
                  windowFeatures: WKWindowFeatures) -> WKWebView? {
 
-        return webView
+        if navigationAction.targetFrame == nil {
+            webView.load(navigationAction.request)
+        }
+        return nil
     }
 
     func webViewDidClose(_ webView: WKWebView) {
