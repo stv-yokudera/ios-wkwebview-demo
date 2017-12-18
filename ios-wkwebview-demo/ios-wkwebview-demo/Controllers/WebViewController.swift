@@ -65,6 +65,16 @@ final class WebViewController: UIViewController {
         let fileUrl = URL(fileURLWithPath: filePath)
         webView.loadFileURL(fileUrl, allowingReadAccessTo: fileUrl)
     }
+    
+    /// キャッシュを削除する
+    private func removeCache() {
+        WKWebsiteDataStore
+            .default()
+            .removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                        modifiedSince: Date(timeIntervalSince1970: 0)) {
+                            print("remove all cache.")
+        }
+    }
 }
 
 // MARK: - WKUIDelegate
