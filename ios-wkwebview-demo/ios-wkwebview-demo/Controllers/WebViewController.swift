@@ -7,42 +7,47 @@
 //
 
 import UIKit
-import WebKit
 
 final class WebViewController: UIViewController {
 
-    private var webView: WKWebView!
+    @IBOutlet weak var customView: CustomView!
+    @IBOutlet weak var backButton: UIBarButtonItem!
+    @IBOutlet weak var forwordButton: UIBarButtonItem!
+    @IBOutlet weak var indicetor: UIActivityIndicatorView!
 
-    // MARK: - View life cycle
-
-    override func loadView() {
-
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
-
-        // スワイプで戻るまたは進むを許可
-        webView.allowsBackForwardNavigationGestures = true
-        view = webView
-    }
-
+    // MARK: - Life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setup()
     }
 
+    // MARK: - IBActions
+
+    @IBAction func didTapBack(_ sender: UIBarButtonItem) {
+        customView.webView?.goBack()
+    }
+
+    @IBAction func didTapForword(_ sender: UIBarButtonItem) {
+        customView.webView?.goForward()
+    }
+
+    @IBAction func didTapReload(_ sender: UIBarButtonItem) {
+        customView.webView?.reload()
+    }
+
     // MARK: - Private
 
     private func setup() {
 
-//        load(urlString: "https://www.apple.com")
+        customView.delegate = self
+        load(urlString: "https://github.com/stv-yokudera")
 
-        // ローカルのdemo.htmlをロードする
-        if let path = Bundle.main.path(forResource: "demo", ofType: "html") {
-            load(filePath: path)
-        }
+//        // ローカルのdemo.htmlをロードする
+//        if let path = Bundle.main.path(forResource: "demo", ofType: "html") {
+//            load(filePath: path)
+//        }
     }
 
     /// URLを指定してWKWebViewでロードする
@@ -53,8 +58,8 @@ final class WebViewController: UIViewController {
         guard let url = URL(string: urlString) else {
             return
         }
-        let myRequest = URLRequest(url: url)
-        webView.load(myRequest)
+        let urlRequest = URLRequest(url: url)
+        customView.webView?.load(urlRequest)
     }
 
     /// FilePathを指定してローカルファイルをWKWebViewでロードする
@@ -63,105 +68,51 @@ final class WebViewController: UIViewController {
     private func load(filePath: String) {
 
         let fileUrl = URL(fileURLWithPath: filePath)
-        webView.loadFileURL(fileUrl, allowingReadAccessTo: fileUrl)
-    }
-    
-    /// キャッシュを削除する
-    private func removeCache() {
-        WKWebsiteDataStore
-            .default()
-            .removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
-                        modifiedSince: Date(timeIntervalSince1970: 0)) {
-                            print("remove all cache.")
-        }
-    }
-}
-
-// MARK: - WKUIDelegate
-
-extension WebViewController: WKUIDelegate {
-
-    /// 新しいウィンドウ、フレームを指定してコンテンツを開く時
-    func webView(_ webView: WKWebView,
-                 createWebViewWith configuration: WKWebViewConfiguration,
-                 for navigationAction: WKNavigationAction,
-                 windowFeatures: WKWindowFeatures) -> WKWebView? {
-
-        if navigationAction.targetFrame == nil {
-            webView.load(navigationAction.request)
-        }
-        return nil
+        customView.webView?.loadFileURL(fileUrl, allowingReadAccessTo: fileUrl)
     }
 
-    func webViewDidClose(_ webView: WKWebView) {
-        
+    private func toolbarStatus() {
+        backButton.isEnabled = customView.isEnabledBack()
+        forwordButton.isEnabled = customView.isEnabledForword()
     }
 
-    /// JSのalert実行時
-    func webView(_ webView: WKWebView,
-                 runJavaScriptAlertPanelWithMessage message: String,
-                 initiatedByFrame frame: WKFrameInfo,
-                 completionHandler: @escaping () -> Swift.Void) {
-
-        print("runJavaScriptAlertPanelWithMessage")
-        // JSのalertから渡されたメッセージをUIAlertControllerで表示
-        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: completionHandler)
+    private func startIndicetor() {
+        indicetor.isHidden = false
+        indicetor.startAnimating()
     }
 
-    /// JSのconfirm実行時
-    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Swift.Void) {
-
-    }
-
-    /// JSのprompt実行時
-    func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Swift.Void) {
-
-    }
-
-    func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKPreviewElementInfo) -> Bool {
-
-        return true
-    }
-
-    func webView(_ webView: WKWebView, previewingViewControllerForElement elementInfo: WKPreviewElementInfo, defaultActions previewActions: [WKPreviewActionItem]) -> UIViewController? {
-
-        return self
-    }
-
-    func webView(_ webView: WKWebView, commitPreviewingViewController previewingViewController: UIViewController) {
-
+    private func stopIndicetor() {
+        indicetor.stopAnimating()
+        indicetor.isHidden = true
     }
 }
 
-// MARK: - WKNavigationDelegate (ロード処理)
-extension WebViewController: WKNavigationDelegate {
+// MARK: - CustomViewDelegate
+extension WebViewController: CustomViewDelegate {
 
-    /// ページ遷移前
-    func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    /// WKWebViewのロード処理の状態変更を受け取る
+    func didChangeLoadingStatus(status: LoadingStatus) {
+        switch status {
+        case .started:
+            startIndicetor()
 
-        // 読み込む
-        decisionHandler(.allow)
-//        // キャンセル
-//        decisionHandler(.cancel)
+        case .finished:
+            toolbarStatus()
+            stopIndicetor()
+
+        case .occurredError(let error):
+            stopIndicetor()
+            print("Error: \(error.localizedDescription)")
+        }
     }
 
-    /// 読み込み開始時
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        print("読み込み開始")
-
+    /// JavaScriptからalertを実行された時の処理
+    func jsAlert(alertController: UIAlertController) {
+        present(alertController, animated: true, completion: nil)
     }
 
-    /// 読み込み完了時
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("読み込み完了")
-    }
-
-    /// 読み込み失敗
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("読み込み失敗")
+    /// JavaScriptからconfirmを実行された時の処理
+    func jsConfirm(alertController: UIAlertController) {
+        present(alertController, animated: true, completion: nil)
     }
 }

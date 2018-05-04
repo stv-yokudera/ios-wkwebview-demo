@@ -14,6 +14,7 @@
 		B643AA1A1FCDC2EB00F3EE3A /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B643AA191FCDC2EB00F3EE3A /* WebViewController.swift */; };
 		B643AA1C1FCDC2F100F3EE3A /* WebViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B643AA1B1FCDC2F100F3EE3A /* WebViewController.storyboard */; };
 		B643AA1F1FCDD73E00F3EE3A /* demo.html in Resources */ = {isa = PBXBuildFile; fileRef = B643AA1E1FCDD73E00F3EE3A /* demo.html */; };
+		B64FB7F6209C922D008EE9F5 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64FB7F5209C922D008EE9F5 /* CustomView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		B643AA191FCDC2EB00F3EE3A /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		B643AA1B1FCDC2F100F3EE3A /* WebViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = WebViewController.storyboard; sourceTree = "<group>"; };
 		B643AA1E1FCDD73E00F3EE3A /* demo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = demo.html; sourceTree = "<group>"; };
+		B64FB7F5209C922D008EE9F5 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		B643A9F71FCDC2C900F3EE3A /* ios-wkwebview-demo */ = {
 			isa = PBXGroup;
 			children = (
+				B64FB7F4209C9217008EE9F5 /* Views */,
 				B643AA1D1FCDD73400F3EE3A /* Others */,
 				B643AA181FCDC2D200F3EE3A /* Controllers */,
 			);
@@ -113,6 +116,14 @@
 				B643AA041FCDC2C900F3EE3A /* Info.plist */,
 			);
 			path = Others;
+			sourceTree = "<group>";
+		};
+		B64FB7F4209C9217008EE9F5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B64FB7F5209C922D008EE9F5 /* CustomView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B64FB7F6209C922D008EE9F5 /* CustomView.swift in Sources */,
 				B643AA1A1FCDC2EB00F3EE3A /* WebViewController.swift in Sources */,
 				B643A9F91FCDC2C900F3EE3A /* AppDelegate.swift in Sources */,
 			);
