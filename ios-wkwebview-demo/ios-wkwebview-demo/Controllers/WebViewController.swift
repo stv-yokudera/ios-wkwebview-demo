@@ -10,10 +10,10 @@ import UIKit
 
 final class WebViewController: UIViewController {
 
-    @IBOutlet weak var customView: CustomView!
-    @IBOutlet weak var backButton: UIBarButtonItem!
-    @IBOutlet weak var forwordButton: UIBarButtonItem!
-    @IBOutlet weak var indicetor: UIActivityIndicatorView!
+    @IBOutlet private weak var customView: CustomView!
+    @IBOutlet private weak var backButton: UIBarButtonItem!
+    @IBOutlet private weak var forwardButton: UIBarButtonItem!
+    @IBOutlet private weak var activityIndicatorView: UIActivityIndicatorView!
 
     // MARK: - Life cycle
     
@@ -29,7 +29,7 @@ final class WebViewController: UIViewController {
         customView.webView?.goBack()
     }
 
-    @IBAction func didTapForword(_ sender: UIBarButtonItem) {
+    @IBAction func didTapForward(_ sender: UIBarButtonItem) {
         customView.webView?.goForward()
     }
 
@@ -73,17 +73,17 @@ final class WebViewController: UIViewController {
 
     private func toolbarStatus() {
         backButton.isEnabled = customView.isEnabledBack()
-        forwordButton.isEnabled = customView.isEnabledForword()
+        forwardButton.isEnabled = customView.isEnabledForward()
     }
 
-    private func startIndicetor() {
-        indicetor.isHidden = false
-        indicetor.startAnimating()
+    private func startIndicator() {
+        activityIndicatorView.isHidden = false
+        activityIndicatorView.startAnimating()
     }
 
-    private func stopIndicetor() {
-        indicetor.stopAnimating()
-        indicetor.isHidden = true
+    private func stopIndicator() {
+        activityIndicatorView.stopAnimating()
+        activityIndicatorView.isHidden = true
     }
 }
 
@@ -94,15 +94,15 @@ extension WebViewController: CustomViewDelegate {
     func didChangeLoadingStatus(status: LoadingStatus) {
         switch status {
         case .started:
-            startIndicetor()
+            startIndicator()
 
         case .finished:
             toolbarStatus()
-            stopIndicetor()
+            stopIndicator()
 
         case .occurredError(let error):
             toolbarStatus()
-            stopIndicetor()
+            stopIndicator()
             print("Error: \(error.localizedDescription)")
         }
     }

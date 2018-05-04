@@ -23,7 +23,7 @@ protocol CustomViewDelegate: class {
 
 final class CustomView: UIView {
 
-    private let headerViewHight: CGFloat = 50.0
+    private let headerViewHeight: CGFloat = 50.0
     private var scrollingToTop = false
     private var updatingContentOffsetY = false
 
@@ -87,22 +87,22 @@ final class CustomView: UIView {
 
         // 画面外に作成
         headerView = UIView(frame: CGRect(x: 0,
-                                          y: -headerViewHight,
+                                          y: -headerViewHeight,
                                           width: frame.width,
-                                          height: headerViewHight))
-        headerView?.backgroundColor = UIColor.red
+                                          height: headerViewHeight))
+        headerView?.backgroundColor = .blue
         // スクロール領域の拡張
-        webView?.scrollView.contentInset = UIEdgeInsetsMake(headerViewHight, 0, 0, 0)
+        webView?.scrollView.contentInset = UIEdgeInsetsMake(headerViewHeight, 0, 0, 0)
         webView?.scrollView.addSubview(headerView ?? UIView())
         // スクロール開始位置を変更
-        webView?.scrollView.setContentOffset(CGPoint(x: 0, y: -headerViewHight), animated: false)
+        webView?.scrollView.setContentOffset(CGPoint(x: 0, y: -headerViewHeight), animated: false)
     }
 
     func isEnabledBack() -> Bool {
         return webView?.canGoBack ?? false
     }
 
-    func isEnabledForword() -> Bool {
+    func isEnabledForward() -> Bool {
         return webView?.canGoForward ?? false
     }
 
@@ -249,9 +249,9 @@ extension CustomView: UIScrollViewDelegate {
 
             var newContentOffsetY: CGFloat
             if scrollView.contentOffset.y < 0 {
-                newContentOffsetY = -headerViewHight
+                newContentOffsetY = -headerViewHeight
             } else {
-                newContentOffsetY = scrollView.contentOffset.y - headerViewHight
+                newContentOffsetY = scrollView.contentOffset.y - headerViewHeight
             }
 
             webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
