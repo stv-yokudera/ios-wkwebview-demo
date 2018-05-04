@@ -25,6 +25,7 @@ final class CustomView: UIView {
 
     private let headerViewHight: CGFloat = 50.0
     private var scrollingToTop = false
+    private var updatingContentOffsetY = false
 
     weak var delegate: CustomViewDelegate?
     var webView: WKWebView?
@@ -237,11 +238,26 @@ extension CustomView: UIScrollViewDelegate {
         print(#function)
 
         print("1. scrollView: (\(scrollView.contentOffset.x), \(scrollView.contentOffset.y))")
-        
-        // scrollView内部のドラッグ、ステータスバータップによる一番上へのスクロールのどちらでもない場合
-        if !scrollView.isDragging && !scrollingToTop {
+
+        // 以下の全てを満たす場合、webView.scrollViewのContentOffsetYを更新する
+        // - scrollView内部のドラッグをしていない
+        // - ステータスバータップによる一番上へのスクロールをしていない
+        // - webView.scrollViewのContentOffsetY更新中でない
+        if !scrollView.isDragging && !scrollingToTop && !updatingContentOffsetY {
+
+            updatingContentOffsetY = true
+
+            var newContentOffsetY: CGFloat
+            if scrollView.contentOffset.y < 0 {
+                newContentOffsetY = -headerViewHight
+            } else {
+                newContentOffsetY = scrollView.contentOffset.y - headerViewHight
+            }
+
+            webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
             print("2. scrollView: (\(scrollView.contentOffset.x), \(scrollView.contentOffset.y))")
-            webView?.scrollView.setContentOffset(CGPoint(x: 0, y: -headerViewHight), animated: false)
+            
+            updatingContentOffsetY = false
         }
     }
 }

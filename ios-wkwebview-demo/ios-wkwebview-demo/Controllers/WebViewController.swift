@@ -101,6 +101,7 @@ extension WebViewController: CustomViewDelegate {
             stopIndicetor()
 
         case .occurredError(let error):
+            toolbarStatus()
             stopIndicetor()
             print("Error: \(error.localizedDescription)")
         }
