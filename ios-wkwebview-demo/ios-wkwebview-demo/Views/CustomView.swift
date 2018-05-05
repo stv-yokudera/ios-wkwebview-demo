@@ -179,6 +179,7 @@ extension CustomView: WKUIDelegate {
     }
 
     /// プレビュー表示の許可
+    @available(iOS 10.0, *)
     func webView(_ webView: WKWebView,
                  shouldPreviewElement elementInfo: WKPreviewElementInfo) -> Bool {
         return true
@@ -264,15 +265,17 @@ extension CustomView: UIScrollViewDelegate {
         if isUpdateableContentOffsetY {
 
             updatingContentOffsetY = true
-
-            var newContentOffsetY: CGFloat
-            if scrollView.contentOffset.y < 0 {
-                newContentOffsetY = -headerViewHeight
-            } else {
-                newContentOffsetY = scrollView.contentOffset.y - headerViewHeight
+            
+            if #available(iOS 11.0, *) {
+                var newContentOffsetY: CGFloat
+                if scrollView.contentOffset.y < 0 {
+                    newContentOffsetY = -headerViewHeight
+                } else {
+                    newContentOffsetY = scrollView.contentOffset.y - headerViewHeight
+                }
+                print("newContentOffsetY: \(newContentOffsetY)")
+                webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
             }
-            print("newContentOffsetY: \(newContentOffsetY)")
-            webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
             
             updatingContentOffsetY = false
         }
