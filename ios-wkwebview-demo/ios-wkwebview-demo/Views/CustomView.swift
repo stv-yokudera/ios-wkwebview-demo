@@ -45,6 +45,14 @@ final class CustomView: UIView {
         setupWebView()
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        // headerViewをscrollView内に追加
+        setHeaderView()
+        webView?.scrollView.delegate = self
+    }
+
     private func setupWebView() {
 
         webView = WKWebView(frame: .zero, configuration: setupConfiguration())
@@ -53,10 +61,6 @@ final class CustomView: UIView {
         webView?.allowsBackForwardNavigationGestures = true
         addSubview(webView ?? WKWebView())
         setupConstain(webView: self.webView)
-
-        // ヘッダービューをスクロール内に追加
-        setHeaderView()
-        webView?.scrollView.delegate = self
     }
 
     /// Configに設定を加える場合はここで行う
@@ -89,7 +93,7 @@ final class CustomView: UIView {
         // 画面外に作成
         headerView = UIView(frame: CGRect(x: 0,
                                           y: -headerViewHeight,
-                                          width: frame.width,
+                                          width: superview?.frame.height ?? frame.height,
                                           height: headerViewHeight))
         headerView?.backgroundColor = .blue
         // スクロール領域の拡張
