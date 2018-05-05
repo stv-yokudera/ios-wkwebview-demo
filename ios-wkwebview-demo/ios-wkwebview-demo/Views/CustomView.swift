@@ -26,6 +26,8 @@ final class CustomView: UIView {
     private let headerViewHeight: CGFloat = 50.0
     private var scrollingToTop = false
     private var updatingContentOffsetY = false
+    private var isOverTheContentSizeHeight = false
+    private var isUnderTheStartingPosition = false
 
     weak var delegate: CustomViewDelegate?
     var webView: WKWebView?
@@ -55,7 +57,6 @@ final class CustomView: UIView {
         // ヘッダービューをスクロール内に追加
         setHeaderView()
         webView?.scrollView.delegate = self
-        webView?.scrollView.bounces = false
     }
 
     /// Configに設定を加える場合はここで行う
@@ -237,13 +238,30 @@ extension CustomView: UIScrollViewDelegate {
 
         print(#function)
 
-        print("1. scrollView: (\(scrollView.contentOffset.x), \(scrollView.contentOffset.y))")
+        if scrollView.frame.height + scrollView.contentOffset.y > scrollView.contentSize.height {
+            print("一番下より下 (bouncing)")
+            isOverTheContentSizeHeight = true
+        }
+
+        if scrollView.contentOffset.y < -headerViewHeight {
+            print("一番上より上  (bouncing)")
+            isUnderTheStartingPosition = true
+        }
 
         // 以下の全てを満たす場合、webView.scrollViewのContentOffsetYを更新する
         // - scrollView内部のドラッグをしていない
         // - ステータスバータップによる一番上へのスクロールをしていない
         // - webView.scrollViewのContentOffsetY更新中でない
-        if !scrollView.isDragging && !scrollingToTop && !updatingContentOffsetY {
+        // - scrollviewの一番下より下にいない (not bouncing)
+        // - scrollviewの一番上より上にいない (not bouncing)
+
+        let isUpdateableContentOffsetY = !scrollView.isDragging
+            && !scrollingToTop
+            && !updatingContentOffsetY
+            && !isOverTheContentSizeHeight
+            && !isUnderTheStartingPosition
+
+        if isUpdateableContentOffsetY {
 
             updatingContentOffsetY = true
 
@@ -253,11 +271,16 @@ extension CustomView: UIScrollViewDelegate {
             } else {
                 newContentOffsetY = scrollView.contentOffset.y - headerViewHeight
             }
-
+            print("newContentOffsetY: \(newContentOffsetY)")
             webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
-            print("2. scrollView: (\(scrollView.contentOffset.x), \(scrollView.contentOffset.y))")
             
             updatingContentOffsetY = false
         }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        print(#function)
+        isOverTheContentSizeHeight = false
+        isUnderTheStartingPosition = false
     }
 }
