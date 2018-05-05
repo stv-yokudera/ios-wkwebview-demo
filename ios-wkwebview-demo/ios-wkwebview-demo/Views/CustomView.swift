@@ -96,9 +96,11 @@ final class CustomView: UIView {
                                           width: superview?.frame.height ?? frame.height,
                                           height: headerViewHeight))
         headerView?.backgroundColor = .blue
+
         // スクロール領域の拡張
         webView?.scrollView.contentInset = UIEdgeInsetsMake(headerViewHeight, 0, 0, 0)
         webView?.scrollView.addSubview(headerView ?? UIView())
+        
         // スクロール開始位置を変更
         webView?.scrollView.setContentOffset(CGPoint(x: 0, y: -headerViewHeight), animated: false)
     }
@@ -241,15 +243,13 @@ extension CustomView: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        print(#function)
-
         if scrollView.frame.height + scrollView.contentOffset.y > scrollView.contentSize.height {
-            print("一番下より下 (bouncing)")
+            // bouncing
             isOverTheContentSizeHeight = true
         }
 
         if scrollView.contentOffset.y < -headerViewHeight {
-            print("一番上より上  (bouncing)")
+            // bouncing
             isUnderTheStartingPosition = true
         }
 
@@ -269,7 +269,7 @@ extension CustomView: UIScrollViewDelegate {
         if isUpdateableContentOffsetY {
 
             updatingContentOffsetY = true
-            
+
             if #available(iOS 11.0, *) {
                 var newContentOffsetY: CGFloat
                 if scrollView.contentOffset.y < 0 {
@@ -280,13 +280,12 @@ extension CustomView: UIScrollViewDelegate {
                 print("newContentOffsetY: \(newContentOffsetY)")
                 webView?.scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: false)
             }
-            
+
             updatingContentOffsetY = false
         }
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print(#function)
         isOverTheContentSizeHeight = false
         isUnderTheStartingPosition = false
     }
